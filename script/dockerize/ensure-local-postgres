@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# check for running postgres instance
+POSTGRES="$(docker ps | grep "entry_page_postgres")"
+
+if [ -z "$POSTGRES" ]
+  then
+
+  # Remove any stopped entry_page_postgres instance
+  docker ps -a | grep "entry_page_postgres" | grep Exit | awk '{print $1}' | xargs docker rm
+  sleep 1
+
+  docker run \
+    -d \
+    -v /var/lib/lokalebasen-postgres:/data \
+    -p 5432 \
+    --name entry_page_postgres \
+    -e USER=lokalebasen \
+    -e PASS=lokalebasen \
+    -e DB=entry_page \
+    paintedfox/postgresql
+
+  docker run --rm=true -e ETCD_URL=$ETCD_URL --link entry_page_postgres:db cargo-bay.lokalebasen.dk/entry_page bundle exec rake db:schema:load
+
+fi

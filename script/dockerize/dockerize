@@ -1,0 +1,55 @@
+#!/bin/bash
+
+SERVER=$1
+
+if [ -z "$SERVER" ]
+    then
+    echo "No target server specified"
+    exit 1
+fi
+
+if [ "$SERVER" == "local" ]
+  then
+  # # Determine etcd node name
+  export ETCD_URL=$(script/dockerize/ensure-local-etcd | tail -n 1)
+  export remote_curl=curl
+  export remote_wget=wget
+  export SERVER_LOCAL_IP=0.0.0.0
+  export LOCAL_DOCKER=true
+else
+  # Select random port for tunnel
+  DOCKER_PORT=`cat /dev/urandom|od -N2 -An -i|awk -v f=2000 -v r=65000 '{printf "%i\n", f + r * $1 / 65536}' |head -n 1`
+
+  # # Create SSH Tunnel
+  ssh -N -L ${DOCKER_PORT}:127.0.0.1:4243 $SERVER &
+  SSH_PID=$!
+  trap "kill $SSH_PID" INT TERM EXIT
+
+  # # Allow SSH Tunnels to start up
+  sleep 3
+
+  # # Determine etcd node name
+  ETCD_NODE_NAME=`ssh $SERVER docker ps |grep "coreos/etcd" | sed -n 's/.*\(etcd-node.*\)/\1/p'`
+
+  # # Determine etcd url
+  ETCD_HOST=`ssh $SERVER docker inspect $ETCD_NODE_NAME |jq '.[0].NetworkSettings.Ports[][0]' | grep -v null | jq --raw-output '"\(.HostIp):\(.HostPort)"' | sed -n '/[0-9\.]*:5/p'`
+  export ETCD_URL=http://$ETCD_HOST
+
+  # # Setup
+  export DOCKER_HOST=tcp://127.0.0.1:${DOCKER_PORT}
+
+  # # Determine server local net ip
+  export SERVER_LOCAL_IP=`ssh $SERVER hostname -I | sed -n 's/.*\(192\.168\.3\.[0-9]*\).*/\1/p'`
+
+  export remote_curl="ssh $SERVER curl"
+  export remote_wget="ssh $SERVER wget"
+fi
+
+script/dockerize/dockerize-build
+
+if [ "$LOCAL_DOCKER" ]
+  then
+  script/dockerize/ensure-local-postgres
+fi
+
+script/dockerize/dockerize-deploy

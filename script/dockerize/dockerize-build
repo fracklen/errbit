@@ -1,0 +1,52 @@
+#!/bin/bash
+#
+# Usage: ./dockerize-build sales01.lokalebasen.dk
+#
+set -e
+BUILD_DIR=/tmp/deploy-errbit
+
+if [ -z "$BRANCH" ]
+  then
+  BRANCH=master
+fi
+
+REVISION=`git rev-parse --short $BRANCH`
+
+BUILD_FILE=${BUILD_DIR}/build.tar
+TMP_BUILD_FILE=${BUILD_DIR}/build-${REVISION}.tar
+
+# Make a deploy directory:
+mkdir -p $BUILD_DIR
+
+# Make a tarball of the code:
+git archive -o $TMP_BUILD_FILE $REVISION
+
+if [ ! -f $BUILD_FILE ]
+then
+  touch $BUILD_FILE
+fi
+
+# Docker will look at the mtime of the $BUILD_FILE to determine
+# if it has changed, so we only copy in a new build file if the
+# checksum has changed.
+TMP_CHKSM=`md5 -q $TMP_BUILD_FILE`
+BUILD_CHKSM=`md5 -q $BUILD_FILE`
+
+if [ "$TMP_CHKSM" != "$BUILD_CHKSM" ]
+then
+  echo "New tarball"
+  mv $TMP_BUILD_FILE $BUILD_FILE
+fi
+
+if [ ! "`cat $BUILD_DIR/REVISION`" = $REVISION ]
+  then
+  echo $REVISION > $BUILD_DIR/REVISION
+fi
+
+# Copy relevant files to Deploy dir
+rsync -a Dockerfile Gemfile Gemfile.lock $BUILD_DIR/
+
+# Build it
+docker build -t cargo-bay.lokalebasen.dk/errbit $BUILD_DIR
+docker tag cargo-bay.lokalebasen.dk/errbit cargo-bay.lokalebasen.dk/errbit:$REVISION
+docker push cargo-bay.lokalebasen.dk/errbit

@@ -1,0 +1,25 @@
+#!/bin/bash
+
+ETCD=$(docker ps |grep "etcd-node1")
+
+SERVER_IP=$(echo $DOCKER_HOST |cut -d '/' -f 3 |cut -d ':' -f 1)
+
+if [ -z "$ETCD" ]
+  then
+  # Remove old containers
+  docker ps -a |grep Exit |grep "etcd-node1" | awk '{print $1}' | xargs docker rm
+
+  # Start new etcd container
+  ETCD_CONTAINER_ID=$(docker run -d --name etcd-node1 -p 5001:5001 coreos/etcd \
+    -peer-addr $SERVER_IP:8001 \
+    -addr $SERVER_IP:5001 \
+    -name etcd-node1 \
+    -snapshot \
+    -snapshot-count 100)
+
+  sleep 1
+fi
+curl -s http://$SERVER_IP:5001/v2/keys/environment -XPOST -L > /dev/null
+curl -s http://$SERVER_IP:5001/v2/keys/entry_page/environment -XPOST -L > /dev/null
+
+echo "http://$SERVER_IP:5001"

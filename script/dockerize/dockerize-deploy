@@ -1,0 +1,61 @@
+#!/bin/bash
+set -x
+
+if [ -z "$BRANCH" ]
+  then
+  BRANCH=master
+fi
+
+REVISION=`git rev-parse --short $BRANCH`
+
+# Pinpoint old container
+OLD_CONTAINERS="$(docker ps | grep "/entry_page:" | awk '{print $1}')"
+
+docker pull cargo-bay.lokalebasen.dk/entry_page
+
+if [ ! -z "$LOCAL_DOCKER" ]
+  then
+  DB_LINK="--link entry_page_postgres:db"
+fi
+
+# DB Migrate
+docker run -i -e ETCD_URL=$ETCD_URL $DB_LINK cargo-bay.lokalebasen.dk/entry_page bundle exec rake db:migrate
+
+# Run it
+CONTAINER_ID=$(docker run -d -p $SERVER_LOCAL_IP::8080 -e ETCD_URL=$ETCD_URL $DB_LINK cargo-bay.lokalebasen.dk/entry_page)
+
+CONTAINER_URL=$(docker port $CONTAINER_ID 8080)
+
+if [ ! -z "$LOCAL_DOCKER" ]
+  then
+  DOCKER_IP=$(echo $DOCKER_HOST | cut -d '/' -f 3 | cut -d ':' -f 1)
+  CONTAINER_URL=$(echo $CONTAINER_URL | sed -e "s/0.0.0.0/$DOCKER_IP/")
+fi
+
+# Wait until connection is not refused
+$remote_wget --retry-connrefused -O /dev/null $CONTAINER_URL/REVISION
+
+# Verify that server is running
+HTTP_STATUS=$($remote_curl -L -s -I -w "%{http_code}" -o /dev/null $CONTAINER_URL/REVISION)
+EXIT_CODE=$?
+
+if [ "$HTTP_STATUS" == "200" ] && [ "$EXIT_CODE" == "0" ]
+  then
+  echo "Switching to new container"
+  $remote_curl -L -s -o /dev/null $ETCD_URL/v2/keys/sites-available/entry_page/DOMAIN -XPUT -d value="entrypage.lokalebasen.dk"
+  $remote_curl -L -s -o /dev/null $ETCD_URL/v2/keys/sites-available/entry_page/ROOT -XPUT -d value="/"
+
+  $remote_curl -L -s -o /dev/null $ETCD_URL/v2/keys/entry_page/nodes/${REVISION}/$SERVER_LOCAL_IP -XPUT -d value="$CONTAINER_URL"
+  $remote_curl -L -s -o /dev/null $ETCD_URL/v2/keys/entry_page/current_revision -XPUT -d value="$REVISION"
+
+  $remote_curl -L -s -o /dev/null $ETCD_URL/v2/keys/sites-enabled/entry_page -XPUT -d value="entry_page"
+
+  if [ ! -z "$OLD_CONTAINERS" ]
+    then
+    echo "Stopping old containers"
+    docker stop $OLD_CONTAINERS
+    docker rm $OLD_CONTAINERS
+  else
+    echo "No old container to stop"
+  fi
+fi
