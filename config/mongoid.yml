@@ -31,7 +31,7 @@ test:
 production:
   sessions:
     default:
-      database: errbit
+      database: errbit_production
       hosts:
         - <%= ENV["MONGODB_HOST"] %>
       username: <%= ENV["MONGODB_USER"] %>
