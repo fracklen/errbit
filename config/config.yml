@@ -106,7 +106,7 @@ github_url: https://github.com
 # sendgrid will be configured by default.
 # ------------------------------------------------------------------------
 smtp_settings:
-  :address:              mn@lokalebasen.dk
+  :address:              errbit@lokalebasen.dk
   :domain:               localhost
   :port:                 "25"
 #  :authentication:       :plain, :login, :cram_md5

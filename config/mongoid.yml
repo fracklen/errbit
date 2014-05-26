@@ -31,6 +31,11 @@ test:
 production:
   sessions:
     default:
-      uri: <%= ENV["MONGODB_URL"] %>
+      database: errbit
+      hosts:
+        - <%= ENV["MONGODB_HOST"] %>
+      username: <%= ENV["MONGODB_USER"] %>
+      password: <%= ENV["MONGODB_PASSWORD"] %>
   options:
     identity_map_enabled: true
+    use_utc: true
