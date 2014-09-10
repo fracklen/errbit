@@ -7,22 +7,22 @@
       %span.github= link_to "Sign in with GitHub", user_omniauth_authorize_path(:github)
 
 = form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f|
-  .required
+  .required.form-group
     = f.label auth_key
-    = f.text_field auth_key, :type => (Errbit::Config.user_has_username ? 'text' : 'email'), :tabindex => 1, :autofocus => true
+    = f.text_field auth_key, :type => (Errbit::Config.user_has_username ? 'text' : 'email'), :tabindex => 1, :autofocus => true, :class => "form-control"
 
-  .required
-    = link_to 'forget it?', new_password_path(resource_name), :class => 'float-right', :id => "forgot_password"
+  .required.form-group
+    = link_to 'forget it?', new_password_path(resource_name), :class => 'pull-right', :id => "forgot_password"
     = f.label :password
-    = f.password_field :password, :tabindex => 2
+    = f.password_field :password, :tabindex => 2, :class => "form-control"
 
   - if devise_mapping.rememberable?
     %div.checkbox
-      = f.check_box :remember_me, :tabindex => 3
-      = f.label :remember_me
+      %label
+        = f.check_box :remember_me, :tabindex => 3
+        Remember me?
 
-  %div.buttons
-    %button{:type => 'submit', :class => 'sign_in'}=t('.sign_in')
+  %button{:type => 'submit', :class => 'btn btn-primary'}=t('.sign_in')
 
 :javascript
   $('a#forgot_password').click(function(){

@@ -4,34 +4,34 @@
 - content_for :meta do
   - if app.current_app_version.present?
     %strong="Latest App Version:"
-    = app.current_app_version
+    %code= app.current_app_version
   %strong=t('.errors_caught')
-  = app.problems.count
+  %code= app.problems.count
   %strong=t('.deploy_count')
-  = app.deploys.count
+  %code= app.deploys.count
   %strong=t('.api_key')
-  = app.api_key
+  %code= app.api_key
 - content_for :action_bar do
   - if current_user.admin?
-    = link_to t('.edit'), edit_app_path(app), :class => 'button'
+    = link_to t('.edit'), edit_app_path(app), :class => 'button btn btn-info btn-sm'
   - if all_errs
-    = link_to t('.unresolved_errs'), app_path(app), :class => 'button'
+    = link_to t('.unresolved_errs'), app_path(app), :class => 'button btn btn-warning btn-sm'
   - else
-    = link_to t('.all_errs'), app_path(app, :all_errs => true), :class => 'button'
+    = link_to t('.all_errs'), app_path(app, :all_errs => true), :class => 'button btn btn-danger btn-sm'
 
   - if current_user.watching?(app)
-    = link_to t('.unwatch'),  app_watcher_path({:app_id => app, :id => current_user.id}), :method => :delete, :class => 'button', :confirm => t('.are_you_sure')
+    = link_to t('.unwatch'),  app_watcher_path({:app_id => app, :id => current_user.id}), :method => :delete, :class => 'button btn btn-danger btn-sm', :confirm => t('.are_you_sure')
 %h3#watchers_toggle
   =t('.watchers')
   %span.click_span=t('.show_hide')
 #watchers_div
   - if app.notify_all_users
-    %table.watchers
+    %table.watchers.table.table-bordered.table-striped
       %thead
         %tr
           %th=t('.all_users_notified')
   - else
-    %table.watchers
+    %table.watchers.table.table-bordered.table-striped
       %thead
         %tr
           %th=t('.user_or_email')
@@ -49,7 +49,7 @@
     =t('.repository')
     %span.click_span=t('.show_hide')
   #repository_div
-    %table.repository
+    %table.repository.table.table-bordered.table-striped
       %thead
         %tr
           %th=t('.github_repo')
@@ -62,7 +62,7 @@
   %span.click_span=t('.show_hide')
 #deploys_div
   - if deploys.any?
-    %table.deploys
+    %table.deploys.table.table-bordered.table-striped
       %thead
         %tr
           %th=t('.when')
@@ -81,7 +81,7 @@
             %td.message #{deploy.message}
             %td.repository #{deploy.repository}
             %td.revision #{deploy.short_revision}
-    = link_to t('.all_deploys', :count => app.deploys.count), app_deploys_path(app), :class => 'button'
+    = link_to t('.all_deploys', :count => app.deploys.count), app_deploys_path(app), :class => 'button btn btn-info btn-sm'
   - else
     %h3=t('.no_deploys')
 
@@ -89,7 +89,8 @@
   %h3.clear=t('.errors')
   %section
     = form_tag search_problems_path(:all_errs => all_errs, :app_id => app.id), :method => :get, :remote => true do
-      = text_field_tag :search, params[:search], :placeholder => t('.search_placeholder')
+      .form-group
+        = text_field_tag :search, params[:search], :placeholder => t('.search_placeholder'), :class => "form-control"
   %br
   %section
     .problem_table{:id => 'problem_table'}

@@ -127,4 +127,6 @@ group :assets do
   gem 'pjax_rails'
   gem 'underscore-rails'
   gem 'turbo-sprockets-rails3'
+  gem 'bootstrap-sass'
+  gem 'sass-rails'
 end
