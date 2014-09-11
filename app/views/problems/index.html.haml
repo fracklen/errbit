@@ -4,13 +4,14 @@
 
 - content_for :action_bar do
   - if @all_errs
-    = link_to 'hide resolved', problems_path, :class => 'button'
+    = link_to 'hide resolved', problems_path, :class => 'button btn btn-info btn-sm'
   - else
-    = link_to 'show resolved', problems_path(:all_errs => true), :class => 'button'
+    = link_to 'show resolved', problems_path(:all_errs => true), :class => 'button btn btn-info btn-sm'
 
 %section
   = form_tag search_problems_path(:all_errs => @all_errs), :method => :get, :remote => true do
-    = text_field_tag :search, params[:search], :placeholder => 'Search for issues'
+    .form-group
+      = text_field_tag :search, params[:search], :placeholder => 'Search for issues', :class => "form-control"
 %br
 %section
   #problem_table.problem_table

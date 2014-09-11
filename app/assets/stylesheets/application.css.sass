@@ -1,0 +1,67 @@
+@import bootstrap-sprockets
+@import bootstrap
+
+@import issue_tracker_icons
+@import notification_service_icons
+
+@import lokalebasen
+@import backtrace
+
+/* --- TAKEN FROM ERRBIT.CSS --- */
+.notice-pagination
+  float: left
+  margin-right: 10px
+
+.notice-pagination-loader
+  visibility: hidden
+  float: left
+  width: 16px
+  height: 16px
+  margin-right: 1em
+
+.notice-pagination-loader img
+  vertical-align: middle
+
+/* Watchers / Issue Tracker / Notification Forms */
+div.watcher.nested .watcher_params, div.issue_tracker.nested .tracker_params, div.notification_service.nested .notification_params
+  display: none
+
+div.nested .chosen
+  display: block !important
+
+div.nested .choose
+  margin-bottom: 0.5em
+
+div.issue_tracker.nested .choose, div.notification_service.nested .choose
+  background-color: #ebebeb
+  border: 1px solid #dddddd
+  margin: 0 0 15px
+  padding: 12px
+
+div.issue_tracker.nested img, div.notification_service.nested img
+  vertical-align: middle
+
+/* Icons for Issue Tracker Radio Buttons */
+div.issue_tracker.nested label.label_radio, div.notification_service.nested label.label_radio
+  color: #929292
+  padding-left: 33px
+  margin-bottom: 6px
+  margin-right: 8px
+  line-height: 30px
+
+div.issue_tracker.nested .choose, div.notification_service.nested .choose
+  padding-bottom: 6px
+
+div.issue_tracker.nested label.label_radio:hover, div.notification_service.nested label.label_radio:hover
+  color: #696969
+
+div.issue_tracker.nested .label_radio input, div.notification_service.nested .label_radio input
+  position: absolute
+  left: -9999px
+
+div.issue_tracker.nested label.r_on, div.issue_tracker.nested label.r_on:hover, div.notification_service.nested label.r_on, div.notification_service.nested label.r_on:hover
+  color: #191919
+
+/* Icons need to be preloaded, otherwise it looks bad */
+.image_preloader
+  display: none

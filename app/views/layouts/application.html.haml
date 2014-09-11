@@ -9,30 +9,42 @@
     = favicon_link_tag
     = csrf_meta_tag
     = stylesheet_link_tag :application
-    = javascript_include_tag :application
 
     = yield :head
   %body{:id => controller.controller_name, :class => controller.action_name}
-    #header
-      %div
-        = link_to t('.errbit'), root_path, :id => 'site-name'
+    #header.navbar.navbar-inverse.navbar-statis-top
+      .container-fluid
+        .navbar-header
+          = link_to t('.errbit'), root_path, :id => 'site-name', :class => "navbar-brand"
         = render 'shared/navigation' if current_user
         = render 'shared/session'
-    #content-wrapper
-      #content-title{ :class => (yield :title_css_class).to_s, :style => (yield :title_style) }
-        %h1= yield :title
-        %span.meta= yield :meta
-        - if (action_bar = yield(:action_bar)).present?
-          #action-bar
-            = action_bar
-      #content
-        = render 'shared/flash_messages'
-        = yield
-      - if content_for?(:comments)
-        #content-comments
-          = yield :comments
-    #footer
-      = t('.powered_html', :link => link_to(t('.errbit'), 'http://github.com/errbit/errbit', :target => '_blank'))
-      %br
-      = Errbit::Version.to_s
+
+    #content-wrapper.container-fluid
+      .row
+        .col-md-10.col-md-offset-1
+          #content-title{ :class => (yield :title_css_class).to_s, :style => (yield :title_style) }
+            %h1
+              = yield :title
+              %small.meta= yield :meta
+
+            - if (action_bar = yield(:action_bar)).present?
+              #action-bar
+                = action_bar
+              %br.clearfix
+
+          #content
+            = render 'shared/flash_messages'
+            = yield
+          - if content_for?(:comments)
+            #content-comments
+              = yield :comments
+
+    #footer.container-fluid
+      .row
+        .col-md-10.col-md-offset-1.text-muted
+          = t('.powered_html', :link => link_to(t('.errbit'), 'http://github.com/errbit/errbit', :target => '_blank'))
+          %br
+          = Errbit::Version.to_s
+
+    = javascript_include_tag :application
     = yield :scripts

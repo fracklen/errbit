@@ -60,8 +60,8 @@ $(function() {
     tab = $(tab);
     var panel = $('#'+tab.attr('rel'));
 
-    tab.closest('.tab-bar').find('a.active').removeClass('active');
-    tab.addClass('active');
+    tab.closest('.tab-bar').find('li.active').removeClass('active');
+    tab.parent().addClass('active');
 
     // If clicking into 'backtrace' tab, hide external backtrace
     if (tab.attr('rel') == "backtrace") { hide_external_backtrace(); }

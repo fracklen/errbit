@@ -3,22 +3,22 @@
 - content_for :title, problem.error_class || truncate(problem.message, :length => 32)
 - content_for :meta do
   %strong App:
-  = link_to app.name, app
+  %code= link_to app.name, app
   %strong Where:
-  = problem.where
+  %code= problem.where
   %br
   %strong Environment:
-  = problem.environment
+  %code= problem.environment
   %strong Last Notice:
-  = problem.last_notice_at.to_s(:precise)
+  %code= problem.last_notice_at.to_s(:precise)
 - content_for :action_bar do
   - if problem.unresolved?
     %span= link_to 'resolve', [:resolve, app, problem], :method => :put,
-      :data => { :confirm => problem_confirm('resolve_one') }, :class => 'resolve'
+      :data => { :confirm => problem_confirm('resolve_one') }, :class => 'resolve btn btn-success btn-sm'
   - if current_user.authentication_token
     %span= link_to 'iCal', polymorphic_path([app, problem], :format => "ics",
-      :auth_token => current_user.authentication_token), :class => "calendar_link"
-  %span>= link_to 'up', (request.env['HTTP_REFERER'] ? :back : app_problems_path(app)), :class => 'up'
+      :auth_token => current_user.authentication_token), :class => "calendar_link btn btn-info btn-sm"
+  %span= link_to 'up', (request.env['HTTP_REFERER'] ? :back : app_problems_path(app)), :class => 'up btn btn-info btn-sm'
   %br
   = render "issue_tracker_links"
 
@@ -27,7 +27,7 @@
     %h3 Comments
     - problem.comments.each do |comment|
       .window
-        %table.comment
+        %table.comment.table.table-bordered.table-striped
           %tr
             %th
               - if comment.user
@@ -46,15 +46,15 @@
     - if problem.comments_allowed?
       = form_for [app, problem, @comment] do |comment_form|
         %p Add a comment
-        = comment_form.text_area :body
-        = comment_form.submit "Save Comment"
+        = comment_form.text_area :body, :class => "form-control"
+        = comment_form.submit "Save Comment", :class => "btn btn-info"
 
 %h4= @notice.try(:message)
 
 = paginate @notices, :param_name => :notice, :theme => :notices
 
 .tab-bar
-  %ul
+  %ul.nav.nav-tabs
     %li= link_to 'Summary', '#summary', :rel => 'summary', :class => 'button'
     %li= link_to 'Backtrace', '#backtrace', :rel => 'backtrace', :class => 'button'
     - if @notice && @notice.user_attributes.present?

@@ -51,6 +51,8 @@ GEM
       multi_json (~> 1.3)
       nokogiri (>= 1.5.2)
       simple_oauth
+    bootstrap-sass (3.2.0.1)
+      sass (~> 3.2)
     builder (3.0.4)
     callsite (0.0.11)
     campy (1.0.0)
@@ -292,6 +294,11 @@ GEM
       json
       rest-client
     safe_yaml (0.9.7)
+    sass (3.3.14)
+    sass-rails (3.2.6)
+      railties (~> 3.2.0)
+      sass (>= 3.1.10)
+      tilt (~> 1.3)
     sawyer (0.5.3)
       addressable (~> 2.3.5)
       faraday (~> 0.8, < 0.10)
@@ -358,6 +365,7 @@ DEPENDENCIES
   better_errors
   binding_of_caller
   bitbucket_rest_api
+  bootstrap-sass
   campy
   capistrano (~> 2.0)
   capybara
@@ -402,6 +410,7 @@ DEPENDENCIES
   rspec-rails
   ruby-fogbugz
   rushover
+  sass-rails
   strong_parameters
   therubyracer
   timecop
