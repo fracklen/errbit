@@ -64,7 +64,7 @@
             Email Address
 
       %div.watcher_params.user{:class => w.object.email.blank? ? 'chosen' : nil}
-        = w.select :user_id, User.all.map{|u| [u.name,u.id.to_s]}, { :include_blank => '-- Select a User --' }, :class => "form-control"
+        = w.select :user_id, users.map{|u| [u.name,u.id.to_s]}, { :include_blank => '-- Select a User --' }, :class => "form-control"
       %div.watcher_params.email{:class => w.object.email.present? ? 'chosen' : nil}
         = w.text_field :email, :class => "form-control"
 
@@ -75,4 +75,3 @@
 
 = render "issue_tracker_fields", :f => f
 = render "service_notification_fields", :f => f
-
