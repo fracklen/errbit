@@ -9,7 +9,7 @@
 # You will need to restart the server after changing any settings.
 
 # The host of your errbit server
-host: errbit.lokalebasen.dk
+host: errbit.services.lokalebasen.dk
 
 # The port for your errbit server.
 # Only set this if it isn't the default for the protocol (i.e.. 80 for HTTP, 443 for HTTPS)
@@ -70,8 +70,8 @@ gravatar_default: identicon
 # Setup your deploy options for capistrano.
 deployment:
   hosts:
-    web: errbit.lokalebasen.dk
-    app: errbit.lokalebasen.dk
+    web: errbit.services.lokalebasen.dk
+    app: errbit.services.lokalebasen.dk
     db: db01.lokalebasen.dk
   repository: https://github.com/lokalebasen/errbit.git
   branch: master
