@@ -20,6 +20,6 @@ ADD build.tar /var/www/errbit/release
 
 EXPOSE 8080
 
-ENTRYPOINT ["etcdenv"]
+ENTRYPOINT ["go-env"]
 
 CMD ["script/dockerize/start.sh"]
