@@ -33,7 +33,9 @@ production:
     default:
       database: errbit_production
       hosts:
-        - <%= ENV["MONGODB_HOST"] %>
+        <% ENV["MONGODB_HOSTS"].split(',').each do |host| %>
+        - <%= host %>
+        <% end %>
       username: <%= ENV["MONGODB_USER"] %>
       password: <%= ENV["MONGODB_PASSWORD"] %>
   options:
