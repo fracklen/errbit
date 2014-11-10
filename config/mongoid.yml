@@ -31,13 +31,15 @@ test:
 production:
   sessions:
     default:
-      database: errbit_production
+      database: <%= ENV["MONGODB_DATABASE"] %>
       hosts:
-        <% ENV["MONGODB_HOSTS"].split(',').each do |host| %>
+        <% (ENV["MONGODB_HOSTS"] || '').split(',').each do |host| %>
         - <%= host %>
         <% end %>
       username: <%= ENV["MONGODB_USER"] %>
       password: <%= ENV["MONGODB_PASSWORD"] %>
+      options:
+        read: :secondary
   options:
     identity_map_enabled: true
     use_utc: true
