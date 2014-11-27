@@ -1,4 +1,4 @@
-FROM lokalebasen/rubies:2.1.1
+FROM lokalebasen/rubies:2.1.4
 MAINTAINER Martin Neiiendam mn@lokalebasen.dk
 ENV REFRESHED_AT 2014-08-25
 
