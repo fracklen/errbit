@@ -11,9 +11,12 @@ class AppsController < ApplicationController
     (current_user.admin? ? App : current_user.apps)
   }
 
-  expose(:apps) {
-    app_scope.all.sort.to_a
-  }
+  expose(:apps) do
+    app_scope.all.sort_by do |a|
+      has_magic = a.notification_service.is_a?(NotificationServices::MagicService) ? -1 : 1
+      [has_magic, a.name]
+    end.to_a
+  end
 
   expose(:app, :ancestor => :app_scope)
 
