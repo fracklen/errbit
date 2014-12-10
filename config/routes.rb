@@ -7,6 +7,8 @@ Errbit::Application.routes.draw do
   get '/locate/:id' => 'notices#locate', :as => :locate
   post '/deploys.txt' => 'deploys#create'
 
+  get '/health_check' => 'health_check#index'
+
   resources :notices,   :only => [:show]
   resources :deploys,   :only => [:show]
   resources :users do
@@ -63,4 +65,3 @@ Errbit::Application.routes.draw do
   root :to => 'apps#index'
 
 end
-
