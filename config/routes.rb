@@ -57,6 +57,7 @@ Errbit::Application.routes.draw do
       resources :stats, :only => [], :defaults => { :format => 'json' } do
         collection do
           get :app
+          get :apps
         end
       end
     end

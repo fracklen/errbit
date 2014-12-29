@@ -23,6 +23,27 @@ class Api::V1::StatsController < ApplicationController
     end
   end
 
+  def apps
+    stats = {
+      items: []
+    }
+
+    App.all.each do |app|
+      next if app.unresolved_count == 0
+
+      stats[:items] << {
+        label: app.name,
+        value: app.unresolved_count
+      }
+    end
+
+    stats[:items] = stats[:items].sort { |app| app[:value] }
+
+    respond_to do |format|
+      format.any(:html, :json) { render :json => Yajl.dump(stats) } # render JSON if no extension specified on path
+      format.xml  { render :xml  => stats }
+    end
+  end
 
   protected
 
