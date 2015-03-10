@@ -50,6 +50,15 @@ Errbit::Application.configure do
   # Set default host for ActionMailer links
   config.action_mailer.default_url_options = { :host => ENV['ERRBIT_HOST'] } if ENV['ERRBIT_HOST']
 
+  if ENV['SMTP_URL'].present?
+    smtp_url = URI(ENV['SMTP_URL'])
+
+    config.action_mailer.smtp_settings = {
+      address: smtp_url.host,
+      port: smtp_url.port
+    }
+  end
+
   # Enable threaded mode
   # config.threadsafe!
 
